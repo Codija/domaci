@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body>
+    <div id="firstDiv">
+        <input id="word" placeholder="Enter a word"/>
+        <button onclick="addToArray();">Add word</button><br>
+        <hr>
+        <input id="autocomplete" type="text" />
+        <div id="autocomplete_result" style="display: none;"></div>
+        <button onclick="startGame();">Start game</button><br>
+    </div>
+    <div id="secondDiv" style="display: none">
+        <input id="selectLetter" maxlength="1" minlength="1" onkeypress="checkLetters();" placeholder="Type aletter"/>
+        <div id="showWords"></div>
+        <div id="lives"></div>
+        <div id="reverseString"></div>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>
