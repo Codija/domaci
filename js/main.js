@@ -10,7 +10,7 @@ var answers = [];
 var guesses = 5;
 
 function updateArray() {
-  var enteredText = new RegExp("^" + autocomplete.value, "i");
+  var enteredText = new RegExp(autocomplete.value, "i");
   for(var x = 0, b = document.createDocumentFragment(), c = false; x < myArray.length; x++) {
     if(enteredText.test(myArray[x])) {
       c = true;
@@ -20,7 +20,7 @@ function updateArray() {
       b.appendChild(d);
     }
   }
-  if(c == true) {
+  while(c < myArray.length) {
     autocomplete_result.innerHTML = "";
     autocomplete_result.style.display = "block";
     autocomplete_result.appendChild(b);
