@@ -7,10 +7,10 @@
 <body>
     <div class="wrapper">
         <div id="firstDiv">
-            <input id="word" placeholder="Enter a word"/>
+            <input id="word" type="text" placeholder="Enter a word"/>
             <button id="btnClear" onclick="addToArray();">Add word</button><br>
             <hr>
-            <input id="autocomplete" type="text" />
+            <input id="autocomplete" type="text" placeholder="Select word" />
             <div id="autocomplete_result" style="display: none;"></div>
             <button onclick="startGame();">Start game</button><br>
             <div id="localStorageTitle"></div>
@@ -28,6 +28,7 @@
                 <ol id="lista">
                 </ol>
             </div>
+            <p id="restart"></p>
         </div>
     </div>
     <script src="js/main.js"></script>

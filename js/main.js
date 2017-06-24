@@ -117,6 +117,7 @@ function checkLetters() {
     document.getElementById('times').style.display = 'none';
     document.getElementById('continueGame').setAttribute("disabled", "disabled");
     document.getElementById('selectLetter').disabled = 'disabled';
+    document.getElementById('restart').innerHTML = 'Refresh page to restart game.';
     // Else if addedWord is strict qeual joinWords.join('')
   }else if(addedWord === joinWords.join('')) {
     // Add time, score and word objects to array savedWords
@@ -161,6 +162,7 @@ function continueGame() {
     document.getElementById('continueGame').setAttribute("disabled", "disabled");
     document.getElementById('selectLetter').disabled = 'disabled';
     alert('Congratulations! You won!');
+    document.getElementById('restart').innerHTML = 'Refresh page to restart game.';
   }
   for(var a = 0; a < addedWord.length; a++) {
     joinWords[a] = "_";
