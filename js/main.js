@@ -120,7 +120,7 @@ function checkLetters() {
     document.getElementById('restart').innerHTML = 'Refresh page to restart game.';
     // Else if addedWord is strict qeual joinWords.join('')
   }else if(addedWord === joinWords.join('')) {
-    // Add time, score and word objects to array savedWords
+    // Push to array savedWords
     savedWords.push({
       'word': addedWord,
       'score': score,
