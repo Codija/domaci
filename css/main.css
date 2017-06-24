@@ -2,6 +2,12 @@
   font-size: 12px;
 }
 
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+
+}
+
 #autocomplete {
   border: 1px solid silver;
   outline: none;
@@ -31,4 +37,8 @@
 
 #autocomplete_result p:hover {
   background: #e5e5e5;
+}
+
+.right {
+  float: right;
 }

@@ -1,81 +1,159 @@
-var myArray = [
+var hangmanArray = [
   "drvo",
-  "palacinka",
-  "pica",
-  "cokolada",
-  "programiranje",
-  "javascript"
+  "mica",
+  "pica"
 ];
-var answers = [];
+var samoglasnici = ['a', 'o', 'e', 'i', 'u'];
+var joinWords = [];
+var savedWords = [];
+var showListItems = document.getElementById('lista');
 var guesses = 5;
+var score = 0;
+var scores = 0;
+var time = 0;
+var seconds = 0;
+var totalScore = 0;
 
 function updateArray() {
-  var enteredText = new RegExp(autocomplete.value, "i");
-  for(var x = 0, b = document.createDocumentFragment(), c = false; x < myArray.length; x++) {
-    if(enteredText.test(myArray[x])) {
+  // Set value from autocomplete and ignore case-sensitiveness
+  var enteredWord = new RegExp(autocomplete.value, 'i');
+  // Create document fragment based on words in hungmanArray
+  for(var arrayLength = 0, createFragment = document.createDocumentFragment(), c = false; arrayLength < hangmanArray.length; arrayLength++) {
+    console.log(c);
+    // Tests for a match in a string, returns true
+    if(enteredWord.test(hangmanArray[arrayLength])) {
       c = true;
-      var d = document.createElement("p");
-      d.innerText = myArray[x];
-      d.setAttribute("onclick", "autocomplete.value=this.innerText;autocomplete_result.innerHTML='';autocomplete_result.style.display='none';");
-      b.appendChild(d);
+      var createPTag = document.createElement('p');
+      createPTag.innerText = hangmanArray[arrayLength];
+      createPTag.setAttribute("onclick", "autocomplete.value=this.innerText;autocomplete_result.innerHTML='';autocomplete_result.style.display='none';");
+      createFragment.appendChild(createPTag);
     }
   }
-  while(c < myArray.length) {
-    autocomplete_result.innerHTML = "";
+  // Do while enteredWord is true
+  while(hangmanArray.length) {
+    autocomplete_result.innerHTML = '';
     autocomplete_result.style.display = "block";
-    autocomplete_result.appendChild(b);
+    autocomplete_result.appendChild(createFragment);
     return;
   }
-}
+};
 
 autocomplete.addEventListener("keyup", updateArray);
 
 
 function addToArray() {
-    var addWord = document.getElementById('word').value;
-    myArray.push(addWord);
+  // Get value form element with the id word and add it to addWord
+  var addWord = document.getElementById('word').value;
+  hangmanArray.push(addWord);
 };
 
+function timer() {
+  // Set seconds on element with the id times and add seconds
+  document.getElementById('times').innerHTML = 'Time: ' + seconds;
+  seconds++;
+};
 
 function startGame() {
-  document.getElementById('firstDiv').style.display = "none";
-  document.getElementById('secondDiv').style.display = "block";
-  addWord = document.getElementById('autocomplete').value;
-  letters = addWord.length;
-  for (var i = 0; i < letters; i++) {
-    answers[i] = "_";
+  // Hide one div and show second
+  document.getElementById('firstDiv').style.display = 'none';
+  document.getElementById('secondDiv').style.display = 'block';
+  addedWord = document.getElementById('autocomplete').value;
+  // For every letter in addedWord change to '_'
+  for (var i = 0; i < addedWord.length; i++) {
+    joinWords[i] = '_';
   }
-  document.getElementById("showWords").textContent = answers.join(" ");
-  document.getElementById('lives').innerHTML =  "You have " +guesses+ " lives left!";
-
-}
+  // Join word, set to show guesses and set timer to count seconds
+  document.getElementById('showWords').textContent = joinWords.join(' ');
+  document.getElementById('lives').innerHTML =  'You have: ' + guesses + ' guesses!';
+  setInterval(timer, 1000);
+};
 
 function checkLetters() {
   var letter = document.getElementById('selectLetter').value;
-  if(letter.length > 0){
-    if (addWord.indexOf(letter) == -1){
+  if(letter.length > 0) {
+    // If guessed letter was not equal to addedWord
+    if(addedWord.indexOf(letter) == -1) {
+      // Decrement guesses and take out from score 0.25
       guesses--;
-    }
-    else{
-      for(var i = 0; i < addWord.length; i++){
-        if(addWord[i] === letter){
-          answers[i] = letter;
+      score -= 0.25;
+    }else {
+      // For every letter in addedWord
+      for(var i = 0; i < addedWord.length; i++) {
+        // If letter of addedWord is strict equal to letter
+        if(addedWord[i] === letter) {
+          // Change '_' to letter
+          joinWords[i] = letter;
+          // If that letter is samoglasnik add to score 0.25
+          if(samoglasnici.indexOf(letter) == -1) {
+              score += 0.25;
+          }
+          // For every other letter add to score 0.50
+          else{
+            score += 0.50;
+          }
         }
       }
     }
-    document.getElementById('showWords').innerHTML = answers.join (' ');
-    document.getElementById('lives').innerHTML =  "You have " +guesses+ " lives!" ;
+    document.getElementById('selectLetter').value = '';
+    document.getElementById('showWords').innerHTML = joinWords.join(' ');
+    document.getElementById('lives').innerHTML =  'You have: ' + guesses + ' guesses!';
   }
-  if(guesses < 1){
-    document.getElementById("showWords").style.display = "none";
+  // If guesses are less or equal than 0
+  if(guesses <= 0){
+    // Finish game
     alert('Crap, you run out of guesses!!');
-  }
-  if(addWord === answers.join("")){
-    var reverse ="";
-    for (var i = addWord.length - 1; i >= 0; i--){
-      reverse += addWord[i];
+    document.getElementById('showWords').style.display = 'none';
+    document.getElementById('times').style.display = 'none';
+    document.getElementById('continueGame').setAttribute("disabled", "disabled");
+    document.getElementById('selectLetter').disabled = 'disabled';
+    // Else if addedWord is strict qeual joinWords.join('')
+  }else if(addedWord === joinWords.join('')) {
+    // Add time, score and word objects to array savedWords
+    savedWords.push({
+      'word': addedWord,
+      'score': score,
+      'time': seconds 
+    });
+    totalScore += score;
+    score = 0;
+    seconds = 0;
+    // For every object in savedWords create new list item
+    for(var n = 0; n < savedWords.length; n++){
+      totalScore += score;
+      var entry = document.createElement('li');
+      entry.appendChild(document.createTextNode(savedWords[n].word + ' - (' + savedWords[n].score + ' scores, ' + savedWords[n].time + ' seconds).'));
     }
-    document.getElementById('reverseString').innerHTML = reverse;
-    alert('Congratulations, you did it!');
+    showListItems.appendChild(entry);
+    document.getElementById('totalScore').innerHTML = 'Total score: ' + totalScore;
+    joinWords = [];
   }
+};
+
+
+function continueGame() {
+  // Set addedWord to be random value from hangmanArray
+  addedWord = hangmanArray[Math.floor(Math.random() * hangmanArray.length)];
+  console.log(addedWord);
+  // Look for every element with word propertie in array savedWords and return their value
+  checkSavedWords = savedWords.map(function(getWord) {
+    return getWord.word;
+  });
+  // If hangmanArray length is greater then savedWords length
+  if(hangmanArray.length > savedWords.length){
+    // The ~ operator transforms only -1 in 0, thus it's the only falsy value.
+    if(~checkSavedWords.indexOf(addedWord)){
+      continueGame();
+    }
+    // Else win game
+  }else {
+    document.getElementById('showWords').style.display = 'none';
+    document.getElementById('times').style.display = 'none';
+    document.getElementById('continueGame').setAttribute("disabled", "disabled");
+    document.getElementById('selectLetter').disabled = 'disabled';
+    alert('Congratulations! You won!');
+  }
+  for(var a = 0; a < addedWord.length; a++) {
+    joinWords[a] = "_";
+  };
+  document.getElementById('showWords').textContent = joinWords.join(" ");
 }
