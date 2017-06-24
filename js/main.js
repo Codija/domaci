@@ -13,13 +13,24 @@ var scores = 0;
 var time = 0;
 var seconds = 0;
 var totalScore = 0;
+// Get items from showLocal and store it into retriveData
+var retriveData = JSON.parse(localStorage.getItem('showLocal'));
+var showStorage =  document.getElementById('showLocalStorage');
+var storageTitle = document.getElementById('localStorageTitle').innerHTML = 'Your last words were:';
+if('showLocal' in localStorage) {
+  for(var i = 0, j = retriveData.length; i < j; i++ ) {
+    showStorage.innerHTML += '- word: ' + retriveData[i].word + ' - score: ' + retriveData[i].score + ' - time: ' + retriveData[i].time + ' seconds.' + '<br>';
+  }
+}else {
+  document.getElementById('showLocalStorage').style.display = 'none';
+  document.getElementById('localStorageTitle').style.display = 'none';
+}
 
 function updateArray() {
   // Set value from autocomplete and ignore case-sensitiveness
   var enteredWord = new RegExp(autocomplete.value, 'i');
   // Create document fragment based on words in hungmanArray
   for(var arrayLength = 0, createFragment = document.createDocumentFragment(), c = false; arrayLength < hangmanArray.length; arrayLength++) {
-    console.log(c);
     // Tests for a match in a string, returns true
     if(enteredWord.test(hangmanArray[arrayLength])) {
       c = true;
@@ -112,7 +123,7 @@ function checkLetters() {
     savedWords.push({
       'word': addedWord,
       'score': score,
-      'time': seconds 
+      'time': seconds
     });
     totalScore += score;
     score = 0;
@@ -128,7 +139,6 @@ function checkLetters() {
     joinWords = [];
   }
 };
-
 
 function continueGame() {
   // Set addedWord to be random value from hangmanArray
@@ -156,4 +166,6 @@ function continueGame() {
     joinWords[a] = "_";
   };
   document.getElementById('showWords').textContent = joinWords.join(" ");
+  // Set savedWords array into local storage
+  localStorage.setItem('showLocal', JSON.stringify(savedWords));
 }
