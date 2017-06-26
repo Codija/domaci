@@ -1,7 +1,7 @@
 var hangmanArray = [
-  "drvo",
-  "mica",
-  "pica"
+  'drvo',
+  'mica',
+  'pica'
 ];
 var samoglasnici = ['a', 'o', 'e', 'i', 'u'];
 var joinWords = [];
@@ -13,7 +13,12 @@ var scores = 0;
 var time = 0;
 var seconds = 0;
 var totalScore = 0;
-// Get items from showLocal and store it into retriveData
+
+// Set value to local storage
+localStorage.setItem('saveWord', JSON.stringify(hangmanArray));
+addedWord = JSON.parse(localStorage.getItem("saveWord"));
+addedWord.push(localStorage.getItem("insertToLS"));
+// Get data from local storage and set values to aprpropriate variables
 var retriveData = JSON.parse(localStorage.getItem('showLocal'));
 var showStorage =  document.getElementById('showLocalStorage');
 var storageTitle = document.getElementById('localStorageTitle').innerHTML = 'Your last words were:';
@@ -26,20 +31,28 @@ if('showLocal' in localStorage) {
   document.getElementById('localStorageTitle').style.display = 'none';
 }
 
+function addToArray() {
+  // Get value form element with the id word and add it to addWord
+  addWord = document.getElementById('word').value;
+  addedWord.push(addWord);
+  localStorage.setItem("insertToLS", addWord);
+};
+
 function updateArray() {
   // Set value from autocomplete and ignore case-sensitiveness
   var enteredWord = new RegExp(autocomplete.value, 'i');
-  // Create document fragment based on words in hungmanArray
-  for(var arrayLength = 0, createFragment = document.createDocumentFragment(), c = false; arrayLength < hangmanArray.length; arrayLength++) {
+  // Create document fragment based on words in addedWord
+  for(var arrayLength = 0, createFragment = document.createDocumentFragment(), c = false; arrayLength < addedWord.length; arrayLength++) {
     // Tests for a match in a string, returns true
-    if(enteredWord.test(hangmanArray[arrayLength])) {
+    if(enteredWord.test(addedWord[arrayLength])) {
       c = true;
       var createPTag = document.createElement('p');
-      createPTag.innerText = hangmanArray[arrayLength];
+      createPTag.innerText = addedWord[arrayLength];
       createPTag.setAttribute("onclick", "autocomplete.value=this.innerText;autocomplete_result.innerHTML='';autocomplete_result.style.display='none';");
       createFragment.appendChild(createPTag);
     }
   }
+
   // Do while enteredWord is true
   while(hangmanArray.length) {
     autocomplete_result.innerHTML = '';
@@ -50,13 +63,6 @@ function updateArray() {
 };
 
 autocomplete.addEventListener("keyup", updateArray);
-
-
-function addToArray() {
-  // Get value form element with the id word and add it to addWord
-  var addWord = document.getElementById('word').value;
-  hangmanArray.push(addWord);
-};
 
 function timer() {
   // Set seconds on element with the id times and add seconds
@@ -150,7 +156,7 @@ function continueGame() {
     return getWord.word;
   });
   // If hangmanArray length is greater then savedWords length
-  if(hangmanArray.length > savedWords.length){
+  if(addedWord.length > savedWords.length){
     // The ~ operator transforms only -1 in 0, thus it's the only falsy value.
     if(~checkSavedWords.indexOf(addedWord)){
       continueGame();
