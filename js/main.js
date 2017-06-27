@@ -13,11 +13,18 @@ var scores = 0;
 var time = 0;
 var seconds = 0;
 var totalScore = 0;
+var newlyAddedWords;
 
-// Set value to local storage
-localStorage.setItem('saveWord', JSON.stringify(hangmanArray));
-addedWord = JSON.parse(localStorage.getItem("saveWord"));
-addedWord.push(localStorage.getItem("insertToLS"));
+// Assign array and value form local storage to addAWord
+addAWord = JSON.parse(localStorage.getItem('insertToLS')) || [];
+// Convert value to JSON string and save it to local storage
+localStorage.setItem('existing', JSON.stringify(hangmanArray));
+existingWords  = JSON.parse(localStorage.getItem('existing'));
+// If addAWord is true
+if(addAWord) {
+  // Concatinate existingWords and addAWord arrays into newlyAddedWords
+  newlyAddedWords = existingWords.concat(addAWord);
+}
 // Get data from local storage and set values to aprpropriate variables
 var retriveData = JSON.parse(localStorage.getItem('showLocal'));
 var showStorage =  document.getElementById('showLocalStorage');
@@ -34,29 +41,34 @@ if('showLocal' in localStorage) {
 function addToArray() {
   // Get value form element with the id word and add it to addWord
   addWord = document.getElementById('word').value;
-  addedWord.push(addWord);
-  localStorage.setItem("insertToLS", addWord);
+  // If the index of addWord from newlyAddedWords is not true, add a word, set value to local storage and reload page
+  if(newlyAddedWords.indexOf(addWord) == -1){
+    console.log(addWord);
+      addAWord.push(addWord);
+      localStorage.setItem('insertToLS', JSON.stringify(addAWord));
+      location.reload();
+    }
 };
 
 function updateArray() {
   // Set value from autocomplete and ignore case-sensitiveness
   var enteredWord = new RegExp(autocomplete.value, 'i');
-  // Create document fragment based on words in addedWord
-  for(var arrayLength = 0, createFragment = document.createDocumentFragment(), c = false; arrayLength < addedWord.length; arrayLength++) {
+  // Create document fragment based on words in newlyAddedWords
+  for(var arrayLength = 0, createFragment = document.createDocumentFragment(), c = false; arrayLength < newlyAddedWords.length; arrayLength++) {
     // Tests for a match in a string, returns true
-    if(enteredWord.test(addedWord[arrayLength])) {
+    if(enteredWord.test(newlyAddedWords[arrayLength])) {
       c = true;
       var createPTag = document.createElement('p');
-      createPTag.innerText = addedWord[arrayLength];
+      createPTag.innerText = newlyAddedWords[arrayLength];
       createPTag.setAttribute("onclick", "autocomplete.value=this.innerText;autocomplete_result.innerHTML='';autocomplete_result.style.display='none';");
       createFragment.appendChild(createPTag);
     }
   }
 
   // Do while enteredWord is true
-  while(hangmanArray.length) {
+  while(newlyAddedWords.length) {
     autocomplete_result.innerHTML = '';
-    autocomplete_result.style.display = "block";
+    autocomplete_result.style.display = 'block';
     autocomplete_result.appendChild(createFragment);
     return;
   }
@@ -118,10 +130,10 @@ function checkLetters() {
   // If guesses are less or equal than 0
   if(guesses <= 0){
     // Finish game
-    alert('Crap, you run out of guesses!!');
+    alert('Shoot, you have run out of guesses!!');
     document.getElementById('showWords').style.display = 'none';
     document.getElementById('times').style.display = 'none';
-    document.getElementById('continueGame').setAttribute("disabled", "disabled");
+    document.getElementById('continueGame').setAttribute('disabled', 'disabled');
     document.getElementById('selectLetter').disabled = 'disabled';
     document.getElementById('restart').innerHTML = 'Refresh page to restart game.';
     // Else if addedWord is strict qeual joinWords.join('')
@@ -148,15 +160,15 @@ function checkLetters() {
 };
 
 function continueGame() {
-  // Set addedWord to be random value from hangmanArray
-  addedWord = hangmanArray[Math.floor(Math.random() * hangmanArray.length)];
+  // Set addedWord to be random value from newlyAddedWords
+  addedWord = newlyAddedWords[Math.floor(Math.random() * newlyAddedWords.length)];
   console.log(addedWord);
   // Look for every element with word propertie in array savedWords and return their value
   checkSavedWords = savedWords.map(function(getWord) {
     return getWord.word;
   });
-  // If hangmanArray length is greater then savedWords length
-  if(addedWord.length > savedWords.length){
+  // If newlyAddedWords length is greater then savedWords length
+  if(newlyAddedWords.length > savedWords.length){
     // The ~ operator transforms only -1 in 0, thus it's the only falsy value.
     if(~checkSavedWords.indexOf(addedWord)){
       continueGame();
@@ -165,7 +177,7 @@ function continueGame() {
   }else {
     document.getElementById('showWords').style.display = 'none';
     document.getElementById('times').style.display = 'none';
-    document.getElementById('continueGame').setAttribute("disabled", "disabled");
+    document.getElementById('continueGame').setAttribute('disabled', 'disabled');
     document.getElementById('selectLetter').disabled = 'disabled';
     alert('Congratulations! You won!');
     document.getElementById('restart').innerHTML = 'Refresh page to restart game.';
